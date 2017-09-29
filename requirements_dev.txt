@@ -6,7 +6,7 @@ flake8==3.4.1
 tox
 coverage
 Sphinx
-cryptography
+cryptography==2.0.3
 PyYAML==3.12
 pytest==3.2.2
 pytest-runner
