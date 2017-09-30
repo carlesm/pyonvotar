@@ -28,7 +28,7 @@ test_requirements = [
 
 setup(
     name='pyOnvotar',
-    version='0.1.0',
+    version='0.1.1',
     description="pyOnvotar wraps as a pypi installable lib all code for onVotar bots",
     long_description=readme + '\n\n' + history,
     author="Carles Mateu",
