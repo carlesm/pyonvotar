@@ -9,5 +9,5 @@ Sphinx==1.6.4
 cryptography==2.0.3
 PyYAML==3.12
 pytest==3.2.2
-pycrypto
+pycrypto==2.6.1
 pytest-runner
