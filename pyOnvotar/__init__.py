@@ -5,3 +5,7 @@
 __author__ = """Carles Mateu"""
 __email__ = 'carlesm@gmail.com'
 __version__ = '0.1.1'
+
+from .pyOnvotar import answer, OnVotar
+
+__all__=['OnVotar', 'answer']

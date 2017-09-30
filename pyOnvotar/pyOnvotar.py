@@ -6,7 +6,10 @@ from .calculate import calculate
 
 logger = logging.getLogger('on_votar')
 
+
 """Main module."""
+
+
 _DNI_LETTERS = 'TRWAGMYFPDXBNJZSQVHLCKEO'
 _DNI_PATTERN = re.compile('^([0-9]{8}[^A-Z]?[A-Z])$')
 _DOB_PATTERN = re.compile('^([0-9]{8})$')
@@ -51,6 +54,84 @@ class DateFormatError(OnVotarError):
 
 class CpFormatError(OnVotarError):
     text = 'Revisa el format del codi postal'
+
+
+
+
+class OnVotar(object):
+    """OnVotar provides with methods to compute where a voter should
+    go on 1-OCt"""
+    def __init__(self):
+        super(OnVotar, self).__init__()
+
+    def answer(self, text):
+        try:
+            dni, date, cp = self._check_input_data(text)
+        except OnVotarError as e:
+            res = str(e)
+            logger.info('%s', e.__class__.__name__)
+        else:
+            result = calculate(dni, date, cp)
+            if result:
+                res = (
+                    '{}\n{}\n{}\n\n'
+                    'Districte: {}\n'
+                    'Secció: {}\n'
+                    'Mesa: {}'
+                ).format(*result)
+                logger.info(
+                    'OK - %s %s',
+                    date[:4], cp
+                )
+            else:
+                res = (
+                    'Les dades introduides no han retornat cap resultat.\n\n'
+                    'Si has canviat recentment de domicili, prova el '
+                    'codi postal anterior.\n'
+                    'Si tens més dubtes, contacta amb el correu electrònic '
+                    'oficial de la Generalitat:\n'
+                    'onvotar@garantiesreferendum.net'
+                )
+                logger.info('DADES_INCORRECTES')
+        return res
+
+    def _check_input_data(self, text):
+        splitted = text.split(' ')
+        if len(splitted) != 3:
+            raise No3DataError()
+
+        raw_dni, raw_date, cp = splitted
+
+        dni = raw_dni.upper().replace('-', '')
+        match = _DNI_PATTERN.match(dni)
+        if not match:
+            raise NifFormatError()
+
+        if not _is_dni_letter_correct(dni):
+            raise NifLetterError()
+
+        date = raw_date.upper().replace('/', '')
+        match = _DOB_PATTERN.match(date)
+        if not match:
+            raise DateFormatError()
+        date = date[-4:]+date[2:4]+date[:2]
+
+        match = _ZIP_PATTERN.match(cp)
+        if not match:
+            raise CpFormatError()
+
+        return dni, date, cp
+
+
+    def _is_dni_letter_correct(self, dni):
+        dni_num = int(dni[:-1])
+        letter_num = dni_num % 23
+        return _DNI_LETTERS[letter_num] == dni[-1]
+
+
+
+
+
 
 
 def answer(text):
