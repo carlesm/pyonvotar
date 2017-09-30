@@ -7,7 +7,7 @@ import re
 import sys
 import logging
 from .log_helper import config_logging
-from .pyOnvotar import answer
+from .pyOnvotar import OnVotar
 
 @click.command()
 @click.argument('dni')
@@ -16,7 +16,8 @@ from .pyOnvotar import answer
 def main(dni, birth, zip, args=None):
     """Console script for pyOnvotar."""
     config_logging()
-    res = answer(' '.join(sys.argv[1:]))
+    onvot = OnVotar()
+    res = onvot.answer(' '.join(sys.argv[1:]))
     print()
     print(res)
 
